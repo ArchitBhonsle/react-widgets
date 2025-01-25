@@ -29,10 +29,10 @@ export default function OtpInput({ length }: OtpInputProps) {
       >
         <input
           ref={inputRef}
-          type="text"
+          type="number"
           value={otp}
           onChange={(e) =>
-            allowEdit(e.target.value, length) &&
+            (otp === "" || otp.length <= length) &&
             setOtp(e.target.value.slice(0, length))
           }
           onBlur={() => {
@@ -50,7 +50,10 @@ export default function OtpInput({ length }: OtpInputProps) {
               key={i}
               className={`rounded-md size-[4ch] flex justify-center items-center 
                     ${
-                      shouldBeHighlighted(i, otp, length, focused)
+                      focused &&
+                      (otp.length === length
+                        ? i === length - 1
+                        : i === otp.length)
                         ? "border-blue-500 border-2"
                         : "border-blue-200 border"
                     }`}
@@ -67,20 +70,5 @@ export default function OtpInput({ length }: OtpInputProps) {
         </button>
       </div>
     </form>
-  );
-}
-
-function allowEdit(otp: string, length: number) {
-  return otp === "" || (otp.length <= length && otp.match(/^\d+$/));
-}
-
-function shouldBeHighlighted(
-  i: number,
-  otp: string,
-  length: number,
-  focused: boolean,
-) {
-  return (
-    focused && (otp.length === length ? i === length - 1 : i === otp.length)
   );
 }
