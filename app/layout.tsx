@@ -5,7 +5,7 @@ import "./globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["500"],
   display: "swap",
 });
 

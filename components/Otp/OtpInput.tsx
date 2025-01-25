@@ -13,15 +13,19 @@ export default function OtpInput({ length }: OtpInputProps) {
       onSubmit={(e) => {
         e.preventDefault();
         alert(`OTP: ${otp}`);
+        setTimeout(() => {
+          inputRef.current?.focus();
+          setOtp("");
+          setFocused(true);
+        }, 1);
       }}
     >
       <div
         className="flex gap-2 flex-row relative"
         onClick={() => {
-          setFocused(true);
           inputRef.current?.focus();
+          setFocused(true);
         }}
-        onBlur={() => setFocused(false)}
       >
         <input
           ref={inputRef}
@@ -31,6 +35,9 @@ export default function OtpInput({ length }: OtpInputProps) {
             allowEdit(e.target.value, length) &&
             setOtp(e.target.value.slice(0, length))
           }
+          onBlur={() => {
+            setFocused(false);
+          }}
           className="w-0 h-0 absolute top-0 left-0 opacity-0"
         />
         {Array.from({ length }, (_, i) => (
@@ -38,13 +45,15 @@ export default function OtpInput({ length }: OtpInputProps) {
             key={i}
             className="flex gap-2 flex-row items-center justify-center"
           >
-            {i !== 0 && i % 3 === 0 && (
-              <div className="w-2 h-1 bg-blue-200"></div>
-            )}
+            {i !== 0 && i % 3 === 0 && <div className="w-2 h-1 bg-blue-200" />}
             <div
               key={i}
               className={`rounded-md size-[4ch] flex justify-center items-center 
-            ${shouldBeHighlighted(i, otp, focused) ? "border-blue-500 border-2" : "border-blue-200 border"}`}
+                    ${
+                      shouldBeHighlighted(i, otp, length, focused)
+                        ? "border-blue-500 border-2"
+                        : "border-blue-200 border"
+                    }`}
             >
               {otp[i]}
             </div>
@@ -65,6 +74,13 @@ function allowEdit(otp: string, length: number) {
   return otp === "" || (otp.length <= length && otp.match(/^\d+$/));
 }
 
-function shouldBeHighlighted(i: number, otp: string, focused: boolean) {
-  return focused && i === otp.length;
+function shouldBeHighlighted(
+  i: number,
+  otp: string,
+  length: number,
+  focused: boolean,
+) {
+  return (
+    focused && (otp.length === length ? i === length - 1 : i === otp.length)
+  );
 }
